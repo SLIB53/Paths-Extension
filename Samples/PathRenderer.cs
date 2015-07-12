@@ -1,4 +1,5 @@
 ﻿using Paths;
+using Paths.Cache;
 using UnityEngine;
 
 [RequireComponent(typeof(LineRenderer))]
@@ -34,7 +35,7 @@ public class PathRenderer : MonoBehaviour
 
         lineRenderer.SetVertexCount(vertexCount);
 
-        var vertices = PathUtility.BuildCache(path, (uint)vertexCount - 2);
+        var vertices = new VertexCache(path, vertexCount - 2).Values;
         for (int i = 0; i < vertices.Length; i++)
             lineRenderer.SetPosition(i, vertices[i]);
     }

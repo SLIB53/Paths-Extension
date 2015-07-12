@@ -28,12 +28,12 @@ using UnityEngine;
 namespace Paths
 {
     /// <summary>
-    /// Static class with helper functions when dealing with Path components. 
+    /// Static class with helper functions when dealing with Path components.
     /// </summary>
     public static class PathUtility
     {
         /// <summary>
-        /// Verified path types. 
+        /// Verified path types.
         /// </summary>
         public static readonly ReadOnlyCollection<Type> PathTypes =
             new ReadOnlyCollection<Type>(
@@ -50,7 +50,7 @@ namespace Paths
         #region Parse
 
         /// <summary>
-        /// Searches g for a Path component's Path. 
+        /// Searches g for a Path component's Path.
         /// </summary>
         public static Path3D GetPath3D(GameObject g)
         {
@@ -66,7 +66,7 @@ namespace Paths
             if (pathType == null)
                 return path;
 
-            // Based on the path type, use the appropriate logic to get the path. 
+            // Based on the path type, use the appropriate logic to get the path.
 
             if (pathType.Equals(typeof(QuadraticBezierPathComponent)))
                 path = g.GetComponent<QuadraticBezierPathComponent>().Path;
@@ -83,7 +83,7 @@ namespace Paths
         }
 
         /// <summary>
-        /// Returns the type of path component attached to a GameObject. 
+        /// Returns the type of path component attached to a GameObject.
         /// </summary>
         public static Type GetPathType(GameObject g)
         {
@@ -98,7 +98,7 @@ namespace Paths
         }
 
         /// <summary>
-        /// Returns the path component attached to a GameObject. 
+        /// Returns the path component attached to a GameObject.
         /// </summary>
         public static Component GetPathComponent(GameObject g)
         {
@@ -131,6 +131,7 @@ namespace Paths
 
         #endregion Parse
 
+        //TODO: Remove this region.
         #region Cache
 
         public static Vector3[] BuildCache(ISpline spline, uint numMidPoints)
@@ -142,104 +143,61 @@ namespace Paths
             return points;
         }
 
-        public static Vector3[] BuildCache(Path3D path, uint numMidPoints)
-        {
-            Vector3[] points = new Vector3[numMidPoints + 2];
-            for (int i = 0; i <= points.Length - 1; i++)
-                points[i] = path.Evaluate((float)i / (points.Length - 1));
+        //public static Vector3[] BuildCache(Path3D path, uint numMidPoints)
+        //{
+        //    Vector3[] points = new Vector3[numMidPoints + 2];
+        //    for (int i = 0; i <= points.Length - 1; i++)
+        //        points[i] = path.Evaluate((float)i / (points.Length - 1));
 
-            return points;
-        }
+        //    return points;
+        //}
 
         public static Vector3 InterpolateCache(Vector3[] cache, float t)
         {
             InterpolateCacheInfo info = new InterpolateCacheInfo(cache, t);
-            return Vector3.Lerp(cache[info.LowerIndex], cache[info.LowerIndex + 1], info.IndexInterpolant);
+            return Vector3.Lerp(cache[info.LowerIndex], cache[info.LowerIndex + 1], info.PercentOfIndexes);
         }
 
         public static Vector3 InterpolateCache(Vector3[] cache, float t, out InterpolateCacheInfo info)
         {
             info = new InterpolateCacheInfo(cache, t);
-            return Vector3.Lerp(cache[info.LowerIndex], cache[info.LowerIndex + 1], info.IndexInterpolant);
+            return Vector3.Lerp(cache[info.LowerIndex], cache[info.LowerIndex + 1], info.PercentOfIndexes);
         }
 
         public struct InterpolateCacheInfo
         {
-            public int LowerIndex;
-            public float IndexInterpolant;
+            public readonly int LowerIndex;
+            public readonly float PercentOfIndexes;
 
             public InterpolateCacheInfo(Vector3[] cache, float t)
             {
+                float percentOfIndexes;
+                int lowerIndex;
+
+                //~ Make sure t is a valid number
                 t = Mathf.Clamp01(t);
 
-                //~ Early Out, avoid index out of bounds
-                if (Mathf.Approximately(t, 1f))
+                if (Mathf.Approximately(t, 1f)) // avoid index out of bounds
                 {
-                    LowerIndex = cache.Length - 2;
-                    IndexInterpolant = 1f;
+                    lowerIndex = cache.Length - 2;
+                    percentOfIndexes = 1f;
+                }
+                else
+                {
+                    percentOfIndexes = t * (cache.Length - 1);
+                    lowerIndex = Mathf.FloorToInt(percentOfIndexes);
+                    if (lowerIndex != 0) // avoid NaN from indexInterpolant % 0
+                        percentOfIndexes = percentOfIndexes % lowerIndex; // store value that is inbetween 0 and 1.
                 }
 
-                float indexInterpolant = t * (cache.Length - 1);
-                int lowerIndex = Mathf.FloorToInt(indexInterpolant);
-                if (lowerIndex != 0) // avoid NaN from indexInterpolant % 0
-                    indexInterpolant = indexInterpolant % lowerIndex; // store value that is inbetween 0 and 1.
-
                 LowerIndex = lowerIndex;
-                IndexInterpolant = indexInterpolant;
+                PercentOfIndexes = percentOfIndexes;
             }
         }
 
         #endregion Cache
 
         #region DebugDraw
-
-        /*public static void DebugDrawPath(Path3D path, uint numMidPoints)
-        {
-            for (float i = 0; i < numMidPoints; i++)
-            {
-                Debug.DrawLine(
-                    path.Evaluate(i / numMidPoints),
-                    path.Evaluate((i + 1.0f) / numMidPoints)
-                    );
-            }
-        }
-        public static void DebugDrawPath(Path3D path, uint numMidPoints, Color color)
-        {
-            for (float i = 0; i < numMidPoints; i++)
-            {
-                Debug.DrawLine(
-                    path.Evaluate(i / numMidPoints),
-                    path.Evaluate((i + 1.0f) / numMidPoints),
-                    color
-                    );
-            }
-        }
-        public static void DebugDrawPath(Path3D path, uint numMidPoints, Color color, float duration)
-        {
-            for (float i = 0; i < numMidPoints; i++)
-            {
-                Debug.DrawLine(
-                    path.Evaluate(i / numMidPoints),
-                    path.Evaluate((i + 1.0f) / numMidPoints),
-                    color,
-                    duration
-                    );
-            }
-        }
-        public static void DebugDrawPath(Path3D path, uint numMidPoints, Color color, float duration, bool depthTest)
-        {
-            for (float i = 0; i < numMidPoints; i++)
-            {
-                Debug.DrawLine(
-                    path.Evaluate(i / numMidPoints),
-                    path.Evaluate((i + 1.0f) / numMidPoints),
-                    color,
-                    duration,
-                    depthTest
-                    );
-            }
-        }
-        */
 
         public static void DebugDrawSpline(ISpline spline, uint numMidPoints)
         {
@@ -295,10 +253,11 @@ namespace Paths
 
         #region Twist
 
+        //TODO: Do I still need this commented code block?...
         // public static Quaternion Twist(Path3D core, float coreT, Path3D guide, float guideT) {
         // Vector3 corePoint = core.Evaluate(coreT); Vector3 rotationPoint = guide.Evaluate(guideT);
 
-        // Vector3 tangentBasis = core.Tangent(coreT); tangentBasis = tangentBasis.normalized; 
+        // Vector3 tangentBasis = core.Tangent(coreT); tangentBasis = tangentBasis.normalized;
 
         // Vector3 normalBasis = Vector3.Cross(tangentBasis, rotationPoint - corePoint); normalBasis
         // = normalBasis.normalized;
@@ -311,7 +270,7 @@ namespace Paths
         // Debug.DrawLine(corePoint, corePoint + binormalBasis, Color.red);
         // * / #endregion
 
-        // return Quaternion.LookRotation(tangentBasis, normalBasis); } 
+        // return Quaternion.LookRotation(tangentBasis, normalBasis); }
 
         public static Quaternion Twist(ISpline core, float coreT, ISpline guide, float guideT)
         {
@@ -341,5 +300,129 @@ namespace Paths
         }
 
         #endregion Twist
+    }
+}
+
+//TODO: Finish documentation.
+//TODO: Move to seperate file.
+namespace Paths.Cache
+{
+    public class PathCache<T>
+    {
+        public readonly T[] Values;
+
+        protected PathCache(int cacheSize)
+        {
+            Values =  new T[cacheSize];
+        }
+
+        public PathCacheIndexInfo GetCacheIndex(float t)
+        {
+            return new PathCacheIndexInfo(Values.Length, t);
+        }
+    }
+
+    /// <summary>
+    /// A vertex cache of spline evaluations.
+    /// </summary>
+    public class VertexCache : PathCache<Vector3>, ISpline
+    {
+        public VertexCache(ISpline spline, int numMidPoints)
+            : base(numMidPoints + 2)
+        {
+            for (int i = 0; i <= Values.Length - 1; i++)
+                Values[i] = spline.Evaluate((float)i / (Values.Length - 1));
+        }
+
+        public Vector3 Evaluate(float t, out PathCacheIndexInfo indexInfo)
+        {
+            indexInfo = GetCacheIndex(t);
+
+            return Vector3.Lerp(
+                Values[indexInfo.LowerIndex],
+                Values[indexInfo.LowerIndex + 1],
+                indexInfo.PercentOfIndexes);
+        }
+
+        public Vector3 Evaluate(float t)
+        {
+            var indexInfo = GetCacheIndex(t);
+
+            return Vector3.Lerp(
+                Values[indexInfo.LowerIndex],
+                Values[indexInfo.LowerIndex + 1],
+                indexInfo.PercentOfIndexes);
+        }
+
+        //TODO: URGENT  Test this method. It should fail when evalInfo.percentOfIndexes is 0, because result - Values[evalInfo.LowerIndex] will = 0 vector.
+        public Vector3 Tangent(float t)
+        {
+            PathCacheIndexInfo evalInfo;
+            Vector3 result = Evaluate(t, out evalInfo);
+
+            return result - Values[evalInfo.LowerIndex];
+        }
+    }
+
+    //TODO: Extend PathCache, construct based on numMidPoints, not divisions.
+    public class LengthCache
+    {
+        public readonly float[] Lengths;
+
+        public LengthCache(ISpline spline, float divisions)
+        {
+            float t = 1.0f / divisions;
+            float increment = t;
+            Vector3 p1 = spline.Evaluate(0f);
+            Vector3 p2;
+            float sum = 0.0f;
+            var sums = new List<float>();
+
+            for (int i = 0; t < 1.0f; i++)
+            {
+                p2 = spline.Evaluate(t);
+                sum += Vector3.Distance(p1, p2);
+                sums.Add(sum);
+                t += increment;
+                p1 = p2;
+            }
+
+            Lengths = sums.ToArray();
+        }
+    }
+
+    public struct PathCacheIndexInfo
+    {
+        public readonly int LowerIndex;
+
+        /// <summary>
+        /// Interpolant between cache[LowerIndex] and cache[LowerIndex+1].
+        /// </summary>
+        public readonly float PercentOfIndexes;
+
+        public PathCacheIndexInfo(int cacheLength, float t)
+        {
+            float percentOfIndexes;
+            int lowerIndex;
+
+            //~ Make sure t is a valid number
+            t = Mathf.Clamp01(t);
+
+            if (Mathf.Approximately(t, 1f)) // avoid index out of bounds
+            {
+                lowerIndex = cacheLength - 2;
+                percentOfIndexes = 1f;
+            }
+            else
+            {
+                percentOfIndexes = t * (cacheLength - 1);
+                lowerIndex = Mathf.FloorToInt(percentOfIndexes);
+                if (lowerIndex != 0) // avoid NaN from indexInterpolant % 0
+                    percentOfIndexes = percentOfIndexes % lowerIndex; // store value that is inbetween 0 and 1.
+            }
+
+            LowerIndex = lowerIndex;
+            PercentOfIndexes = percentOfIndexes;
+        }
     }
 }

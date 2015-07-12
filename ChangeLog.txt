@@ -1,8 +1,8 @@
-VERSION 0.7
+VERSION 0.75
 
 
 CHANGES
-
+`PathCache implementation (VertexCache, LengthCache)
 
 TODO
 
@@ -16,13 +16,11 @@ Tasks
 `Hide vs Draw inconsistency in settings
 `DynamicBezier == overload
 `Finish Dynamic bezier editor
-`DynamicBezier menu items
 `Lock visibility
 `change path color
 `Magnitude scaling
 `Documentation for Path classes
 `multi object edit support
-`Path3D PathCache
 
 
 

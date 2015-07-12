@@ -123,7 +123,7 @@ namespace Paths
         }
 
         /// <summary>
-        /// Evaluates the point at t for this Bezier curve. 
+        /// Evaluates the point at t for this Bezier curve.
         /// </summary>
         /// <param name="t">
         /// Interpolant value between 0 and 1. t is implicitly clamped between 0 and 1.
@@ -141,7 +141,7 @@ namespace Paths
         }
 
         /// <summary>
-        /// Calculates the length of the curve. Use when Length property is inaccurate. 
+        /// Calculates the length of the curve. Use when Length property is inaccurate.
         /// </summary>
         public float CalculateLength(float divisions)
         {
@@ -163,7 +163,7 @@ namespace Paths
         }
 
         /// <summary>
-        /// Calculates the tangent vector at the point Interpolate(t). The vector returned is not normalized. 
+        /// Calculates the tangent vector at the point Interpolate(t). The vector returned is not normalized.
         /// </summary>
         public Vector3 Tangent(float t)
         {
