@@ -1,0 +1,45 @@
+VERSION 0.7
+
+
+CHANGES
+
+
+TODO
+
+Known Issues
+`Multiple path components on single gameobject have overlapping tool shelf
+`(Editor inspectors) high euler rotation values make path vectors creep
+`"Look rotation viewing vector is zero" appearing in console
+`Text color for scene view GUI is black in free, white in pro
+
+Tasks
+`Hide vs Draw inconsistency in settings
+`DynamicBezier == overload
+`Finish Dynamic bezier editor
+`DynamicBezier menu items
+`Lock visibility
+`change path color
+`Magnitude scaling
+`Documentation for Path classes
+`multi object edit support
+`Path3D PathCache
+
+
+
+ROADMAP
+
+Milestone 1: HTML Documentation, Manual, more samples
+
+Milestone 2: Finish Editor (simple mode, pivot mode)
+- New editor mode based on technical editing found in Maya and Blender.
+- Finalize functionalities of the core editor experience.
+  This includes details regarding Tool status.
+
+1.0: Multi Knot Beziers (DynamicBezier & BezierChain)
+
+
+Demos
+-API Demo: Twist
+-API Demo: Evaluate
+-API Demo: Build cache
+-Performance Demo: Distortion Experiment
