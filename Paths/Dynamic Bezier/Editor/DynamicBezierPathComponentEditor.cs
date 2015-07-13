@@ -263,7 +263,7 @@ Draw:
         }
 
         // draw tangent lines
-        if (settings.DrawTangentLines)
+        if (!settings.HideTangentLines)
         {
             Handles.color = Color.cyan;
             for (int i = 0; i < worldBezier.Knots.Count - 1; i++)

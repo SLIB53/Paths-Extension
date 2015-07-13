@@ -3,6 +3,8 @@ VERSION 0.75
 
 CHANGES
 `PathCache implementation (VertexCache, LengthCache)
+`Editor fixes
+`Tangent drawing in Test Interpolate
 
 TODO
 
@@ -11,6 +13,7 @@ Known Issues
 `(Editor inspectors) high euler rotation values make path vectors creep
 `"Look rotation viewing vector is zero" appearing in console
 `Text color for scene view GUI is black in free, white in pro
+`Cannot undo create from menu
 
 Tasks
 `Hide vs Draw inconsistency in settings

@@ -18,7 +18,7 @@ namespace PathsEditor
     {
         public bool TestInterpolate;
         public bool DrawBezierDebugLines;
-        public bool DrawTangentLines;
+        public bool HideTangentLines;
         public bool HideHandles;
         public bool HideDirectionCones;
         public bool PathFoldout;
@@ -29,7 +29,7 @@ namespace PathsEditor
         public ToolSettings(
             bool testInterpolate = false,
             bool drawDebugLines = false,
-            bool drawTangentLines = true,
+            bool hideTangentLines = false,
             bool hideHandles = false,
             bool hideDirectionCones = false,
             bool pathFoldout = true,
@@ -39,7 +39,7 @@ namespace PathsEditor
         {
             TestInterpolate = testInterpolate;
             DrawBezierDebugLines = drawDebugLines;
-            DrawTangentLines = drawTangentLines;
+            HideTangentLines = hideTangentLines;
             HideHandles = hideHandles;
             HideDirectionCones = hideDirectionCones;
             PathFoldout = pathFoldout;

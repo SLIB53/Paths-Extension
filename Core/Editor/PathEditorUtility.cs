@@ -40,7 +40,7 @@ namespace Paths
                 settings.TestInterpolate = EditorGUILayout.Toggle("Test Interpolate", settings.TestInterpolate);
                 settings.DrawBezierDebugLines = EditorGUILayout.Toggle("Draw Debug Lines", settings.DrawBezierDebugLines);
                 if (pathType == 1)
-                    settings.DrawTangentLines = EditorGUILayout.Toggle("Draw Tangent Lines", settings.DrawTangentLines);
+                    settings.HideTangentLines = EditorGUILayout.Toggle("Hide Tangent Lines", settings.HideTangentLines);
                 settings.HideHandles = EditorGUILayout.Toggle("Hide Handles", settings.HideHandles);
                 settings.HideDirectionCones = EditorGUILayout.Toggle("Hide Direction Cones", settings.HideDirectionCones);
 
@@ -67,6 +67,9 @@ namespace Paths
 
             Handles.color = GetTColor(t);
             Handles.SphereCap(0, targetPoint, Quaternion.identity, sphereSize);
+
+            Handles.color = Color.cyan;
+            Handles.DrawAAPolyLine(targetPoint, targetPoint + worldSpline.Tangent(t).normalized);
         }
 
         public static Color GetTColor(float t)

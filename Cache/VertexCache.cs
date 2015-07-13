@@ -3,7 +3,7 @@
 namespace Paths.Cache
 {
     /// <summary>
-    /// A vertex cache that caches spline evaluations.
+    /// Caches spline evaluations.
     /// </summary>
     public class VertexCache : PathCache<Vector3>, ISpline
     {

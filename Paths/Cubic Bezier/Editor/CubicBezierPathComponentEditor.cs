@@ -252,7 +252,7 @@ Draw:
         }
 
         // draw tangent lines
-        if (settings.DrawTangentLines)
+        if (!settings.HideTangentLines)
         {
             Handles.color = Color.cyan;
             Handles.DrawDottedLine(worldBezier.StartPosition, worldBezier.StartTangent, 7.5f);
