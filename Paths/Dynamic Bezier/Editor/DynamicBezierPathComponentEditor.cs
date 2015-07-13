@@ -14,10 +14,10 @@
  * Akilram.com
  */
 
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using Paths;
+using Paths.Cache;
 using PathsEditor;
 using UnityEditor;
 using UnityEngine;
@@ -59,7 +59,7 @@ public class DynamicBezierPathComponentEditor : Editor
         settings.PathFoldout = EditorGUILayout.Foldout(settings.PathFoldout, "Path");
         if (settings.PathFoldout)
         {
-            // EditorGUI.indentLevel++; 
+            // EditorGUI.indentLevel++;
 
             if (newKnots.Count <= 0)
             {
@@ -204,7 +204,7 @@ Draw:
     {
         for (int i = 0; i < targetPath.LocalBezier.Knots.Count; i++)
         {
-            // Undo world transformation before writing values to Path's bezier curve 
+            // Undo world transformation before writing values to Path's bezier curve
             Vector3 newLocalPosition;
             {
                 var handlePosition = targetPath.WorldSpaceBezier.Knots[i];
@@ -241,14 +241,14 @@ Draw:
     private void Draw()
     {
         var worldBezier = targetPath.WorldSpaceBezier;
-        var vertexCount = DynamicBezier.GoodNumMidPoints * (uint)worldBezier.Knots.Count;
+        var vertexCount = DynamicBezier.GoodNumMidPoints * worldBezier.Knots.Count;
         vertexCount /= 2;
-        var cPointCache = PathUtility.BuildCache(worldBezier, vertexCount);
+        var cPointCache = new VertexCache(worldBezier, vertexCount).Values;//PathUtility.BuildCache(worldBezier, vertexCount);
 
-        // draw bezier 
+        // draw bezier
         PathEditorUtility.DrawSplineInScene(cPointCache);
 
-        // draw direction cone cap 
+        // draw direction cone cap
         if (!settings.HideDirectionCones
             && targetScript.transform.lossyScale != Vector3.zero
             && targetPath.LocalBezier.Knots.Count > 1)  // also hide cones if virtually a dot
@@ -262,7 +262,7 @@ Draw:
             Handles.ConeCap(0, worldBezier.Evaluate(1f), Quaternion.LookRotation(worldBezier.Evaluate(1f) - worldBezier.Evaluate(1f - 0.01f)), endConeSize);
         }
 
-        // draw tangent lines 
+        // draw tangent lines
         if (settings.DrawTangentLines)
         {
             Handles.color = Color.cyan;
@@ -270,7 +270,7 @@ Draw:
                 Handles.DrawDottedLine(worldBezier.Knots[i], worldBezier.Knots[i + 1], 7.5f);
         }
 
-        // Draw knot labels 
+        // Draw knot labels
         var knotLabelStyle = new GUIStyle();
         knotLabelStyle.fontStyle = FontStyle.Bold;
         knotLabelStyle.fontSize = 17;
@@ -283,11 +283,11 @@ Draw:
             Handles.Label(worldBezier.Knots[i], i.ToString(), knotLabelStyle);
         }
 
-        // test t 
+        // test t
         if (settings.TestInterpolate)
             PathEditorUtility.DrawTestInterpolate(worldBezier, settings.EditorData.T);
 
-        // draw GUI 
+        // draw GUI
         InterpolateSceneGUI();
         ToolShelf();
     }

@@ -16,6 +16,7 @@
 
 using System;
 using Paths;
+using Paths.Cache;
 using PathsEditor;
 using UnityEditor;
 using UnityEngine;
@@ -163,7 +164,7 @@ Draw:
 
     private void MoveToolSceneGUI()
     {
-        // Undo world transformation before writing values to Path's bezier curve 
+        // Undo world transformation before writing values to Path's bezier curve
         Func<Vector3, Vector3> handleToLocal = (handlePoint) =>
         { return PathEditorUtility.HandleToLocalPosition(handlePoint, cubicBezierPath.LocalSpaceTransform); };
 
@@ -172,7 +173,7 @@ Draw:
         Vector3 newLocalEndPosition = handleToLocal(cubicBezierPath.EndPosition);
         Vector3 newLocalEndTangent = handleToLocal(cubicBezierPath.EndTangent);
 
-        // Write values to Path's bezier curve 
+        // Write values to Path's bezier curve
         if (newLocalStartPosition != cubicBezierPath.LocalBezier.StartPosition
             || newLocalStartTangent != cubicBezierPath.LocalBezier.StartTangent
             || newLocalEndPosition != cubicBezierPath.LocalBezier.EndPosition
@@ -224,8 +225,8 @@ Draw:
     {
         CubicBezier worldBezier = cubicBezierPath.WorldSpaceBezier;
 
-        // draw bezier 
-        Vector3[] cPointCache = PathUtility.BuildCache(worldBezier, CubicBezier.GoodNumMidPoints);
+        // draw bezier
+        Vector3[] cPointCache = new VertexCache(worldBezier, CubicBezier.GoodNumMidPoints).Values; // PathUtility.BuildCache(worldBezier, CubicBezier.GoodNumMidPoints);
         /*Handles.color = Color.yellow;
         Handles.DrawAAPolyLine(cPointCache);
         */
@@ -238,7 +239,7 @@ Draw:
             Handles.DrawAAPolyLine(lineSegment);
         }
 
-        // draw direction cone cap 
+        // draw direction cone cap
         if (!settings.HideDirectionCones && targetScript.transform.lossyScale != Vector3.zero) //check for zero vector, since LookRotation logs messages
         {
             float startConeSize = PathEditorUtility.Nice3DHandleSize(worldBezier.Evaluate(0f));
@@ -250,7 +251,7 @@ Draw:
             Handles.ConeCap(0, worldBezier.Evaluate(1f), Quaternion.LookRotation(worldBezier.Tangent(1f)), endConeSize);
         }
 
-        // draw tangent lines 
+        // draw tangent lines
         if (settings.DrawTangentLines)
         {
             Handles.color = Color.cyan;
@@ -258,11 +259,11 @@ Draw:
             Handles.DrawDottedLine(worldBezier.EndPosition, worldBezier.EndTangent, 7.5f);
         }
 
-        // test t 
+        // test t
         if (settings.TestInterpolate)
             PathEditorUtility.DrawTestInterpolate(worldBezier, settings.EditorData.T);
 
-        // draw GUI 
+        // draw GUI
         InterpolateSceneGUI();
         ToolShelf();
     }
@@ -304,7 +305,7 @@ Draw:
                 {
                     Undo.RecordObject(target, "Reverse Cubic Bezier");
 
-                    // swap positions 
+                    // swap positions
                     Vector3 tempPos = cubicBezierPath.StartPosition;
                     cubicBezierPath.StartPosition = cubicBezierPath.EndPosition;
                     cubicBezierPath.EndPosition = tempPos;

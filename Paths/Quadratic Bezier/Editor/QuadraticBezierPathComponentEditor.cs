@@ -16,6 +16,7 @@
 
 using System;
 using Paths;
+using Paths.Cache;
 using PathsEditor;
 using UnityEditor;
 using UnityEngine;
@@ -153,13 +154,12 @@ Draw:
         //if(!safe)
         //    SceneView.currentDrawingSceneView.ShowNotification(new GUIContent(PathEditorUtility.EditorUnavailable));
 
-
         return safe;
     }
 
     private void MoveToolSceneGUI()
     {
-        // Undo world transformation before writing values to Path's bezier curve 
+        // Undo world transformation before writing values to Path's bezier curve
         Func<Vector3, Vector3> handleToLocal = (handlePoint) =>
         { return PathEditorUtility.HandleToLocalPosition(handlePoint, qdrBezierPath.LocalSpaceTransform); };
 
@@ -167,7 +167,7 @@ Draw:
         Vector3 newLocalMidTangent = handleToLocal(qdrBezierPath.MidTangent);
         Vector3 newLocalEndPosition = handleToLocal(qdrBezierPath.EndPosition);
 
-        // Write values to Path's bezier curve 
+        // Write values to Path's bezier curve
         if (newLocalStartPosition != qdrBezierPath.LocalBezier.StartPosition
             || newLocalMidTangent != qdrBezierPath.LocalBezier.MidTangent
             || newLocalEndPosition != qdrBezierPath.LocalBezier.EndPosition)
@@ -212,12 +212,12 @@ Draw:
     private void Draw()
     {
         QuadraticBezier worldBezier = qdrBezierPath.WorldSpaceBezier;
-        var cPointCache = PathUtility.BuildCache(worldBezier, DynamicBezier.GoodNumMidPoints);
+        var cPointCache = new VertexCache(worldBezier, QuadraticBezier.GoodNumMidPoints).Values; //PathUtility.BuildCache(worldBezier, DynamicBezier.GoodNumMidPoints);
 
-        // draw bezier 
+        // draw bezier
         PathEditorUtility.DrawSplineInScene(cPointCache);
 
-        // draw direction cone cap 
+        // draw direction cone cap
         if (!settings.HideDirectionCones
                 && targetScript.transform.lossyScale != Vector3.zero)  // also hide cones if virtually a dot
         {
@@ -230,7 +230,7 @@ Draw:
             Handles.ConeCap(0, worldBezier.Evaluate(1f), Quaternion.LookRotation(worldBezier.Evaluate(1f) - worldBezier.Evaluate(1f - 0.01f)), endConeSize);
         }
 
-        // draw tangent lines 
+        // draw tangent lines
         if (settings.DrawTangentLines)
         {
             Handles.color = Color.cyan;
@@ -238,11 +238,11 @@ Draw:
             Handles.DrawDottedLine(worldBezier.MidTangent, worldBezier.EndPosition, 7.5f);
         }
 
-        // test t 
+        // test t
         if (settings.TestInterpolate)
             PathEditorUtility.DrawTestInterpolate(worldBezier, settings.EditorData.T);
 
-        // draw GUI 
+        // draw GUI
         InterpolateSceneGUI();
         ToolShelf();
     }

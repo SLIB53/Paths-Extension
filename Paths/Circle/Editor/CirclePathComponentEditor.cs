@@ -15,6 +15,7 @@
  */
 
 using Paths;
+using Paths.Cache;
 using PathsEditor;
 using UnityEditor;
 using UnityEngine;
@@ -172,8 +173,8 @@ Draw:
         else if (Mathf.Abs(circlePath.MaxAngle) >= Circle.TwoPI) // if negative maxAngle and is still at least one loop
             reducedCirclePath.MaxAngle -= Circle.TwoPI;
 
-        // draw circle 
-        var cPointCache = PathUtility.BuildCache(reducedCirclePath, 128);
+        // draw circle
+        var cPointCache = new VertexCache(reducedCirclePath, 128).Values; //PathUtility.BuildCache(reducedCirclePath, 128);
         /*Handles.color = Color.yellow;
         Handles.DrawAAPolyLine(cPointCache);
         */
@@ -186,7 +187,7 @@ Draw:
             Handles.DrawAAPolyLine(lineSegment);
         }
 
-        // draw direction cone cap 
+        // draw direction cone cap
         if (!settings.HideDirectionCones
             && circlePath.LocalSpaceTransform.lossyScale != Vector3.zero
             && circlePath.LocalCircle.Radius != 0f
@@ -201,7 +202,7 @@ Draw:
             Handles.ConeCap(0, endPoint, Quaternion.LookRotation(circlePath.Tangent(1f)), endConeSize);
         }
 
-        // test t 
+        // test t
         if (settings.TestInterpolate)
             PathEditorUtility.DrawTestInterpolate(circlePath, settings.EditorData.T);
 

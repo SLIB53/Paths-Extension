@@ -132,75 +132,79 @@ namespace Paths
         #endregion Parse
 
         //TODO: Remove this region.
-        #region Cache
 
-        public static Vector3[] BuildCache(ISpline spline, uint numMidPoints)
-        {
-            Vector3[] points = new Vector3[numMidPoints + 2];
-            for (int i = 0; i <= points.Length - 1; i++)
-                points[i] = spline.Evaluate((float)i / (points.Length - 1));
+        //#region Cache
 
-            return points;
-        }
-
-        //public static Vector3[] BuildCache(Path3D path, uint numMidPoints)
+        //public static Vector3[] BuildCache(ISpline spline, uint numMidPoints)
         //{
         //    Vector3[] points = new Vector3[numMidPoints + 2];
         //    for (int i = 0; i <= points.Length - 1; i++)
-        //        points[i] = path.Evaluate((float)i / (points.Length - 1));
+        //        points[i] = spline.Evaluate((float)i / (points.Length - 1));
 
         //    return points;
         //}
 
-        public static Vector3 InterpolateCache(Vector3[] cache, float t)
-        {
-            InterpolateCacheInfo info = new InterpolateCacheInfo(cache, t);
-            return Vector3.Lerp(cache[info.LowerIndex], cache[info.LowerIndex + 1], info.PercentOfIndexes);
-        }
+        ////public static Vector3[] BuildCache(Path3D path, uint numMidPoints)
+        ////{
+        ////    Vector3[] points = new Vector3[numMidPoints + 2];
+        ////    for (int i = 0; i <= points.Length - 1; i++)
+        ////        points[i] = path.Evaluate((float)i / (points.Length - 1));
 
-        public static Vector3 InterpolateCache(Vector3[] cache, float t, out InterpolateCacheInfo info)
-        {
-            info = new InterpolateCacheInfo(cache, t);
-            return Vector3.Lerp(cache[info.LowerIndex], cache[info.LowerIndex + 1], info.PercentOfIndexes);
-        }
+        ////    return points;
+        ////}
 
-        public struct InterpolateCacheInfo
-        {
-            public readonly int LowerIndex;
-            public readonly float PercentOfIndexes;
+        //public static Vector3 InterpolateCache(Vector3[] cache, float t)
+        //{
+        //    InterpolateCacheInfo info = new InterpolateCacheInfo(cache, t);
+        //    return Vector3.Lerp(cache[info.LowerIndex], cache[info.LowerIndex + 1], info.PercentOfIndexes);
+        //}
 
-            public InterpolateCacheInfo(Vector3[] cache, float t)
-            {
-                float percentOfIndexes;
-                int lowerIndex;
+        //public static Vector3 InterpolateCache(Vector3[] cache, float t, out InterpolateCacheInfo info)
+        //{
+        //    info = new InterpolateCacheInfo(cache, t);
+        //    return Vector3.Lerp(cache[info.LowerIndex], cache[info.LowerIndex + 1], info.PercentOfIndexes);
+        //}
 
-                //~ Make sure t is a valid number
-                t = Mathf.Clamp01(t);
+        //public struct InterpolateCacheInfo
+        //{
+        //    public readonly int LowerIndex;
+        //    public readonly float PercentOfIndexes;
 
-                if (Mathf.Approximately(t, 1f)) // avoid index out of bounds
-                {
-                    lowerIndex = cache.Length - 2;
-                    percentOfIndexes = 1f;
-                }
-                else
-                {
-                    percentOfIndexes = t * (cache.Length - 1);
-                    lowerIndex = Mathf.FloorToInt(percentOfIndexes);
-                    if (lowerIndex != 0) // avoid NaN from indexInterpolant % 0
-                        percentOfIndexes = percentOfIndexes % lowerIndex; // store value that is inbetween 0 and 1.
-                }
+        //    public InterpolateCacheInfo(Vector3[] cache, float t)
+        //    {
+        //        float percentOfIndexes;
+        //        int lowerIndex;
 
-                LowerIndex = lowerIndex;
-                PercentOfIndexes = percentOfIndexes;
-            }
-        }
+        //        //~ Make sure t is a valid number
+        //        t = Mathf.Clamp01(t);
 
-        #endregion Cache
+        //        if (Mathf.Approximately(t, 1f)) // avoid index out of bounds
+        //        {
+        //            lowerIndex = cache.Length - 2;
+        //            percentOfIndexes = 1f;
+        //        }
+        //        else
+        //        {
+        //            percentOfIndexes = t * (cache.Length - 1);
+        //            lowerIndex = Mathf.FloorToInt(percentOfIndexes);
+        //            if (lowerIndex != 0) // avoid NaN from indexInterpolant % 0
+        //                percentOfIndexes = percentOfIndexes % lowerIndex; // store value that is inbetween 0 and 1.
+        //        }
+
+        //        LowerIndex = lowerIndex;
+        //        PercentOfIndexes = percentOfIndexes;
+        //    }
+        //}
+
+        //#endregion Cache
 
         #region DebugDraw
 
-        public static void DebugDrawSpline(ISpline spline, uint numMidPoints)
+        public static void DebugDrawSpline(ISpline spline, int numMidPoints)
         {
+            if (numMidPoints < 0)
+                throw new System.ArgumentOutOfRangeException("numMidPoints");
+
             for (float i = 0; i < numMidPoints; i++)
             {
                 Debug.DrawLine(
@@ -210,8 +214,11 @@ namespace Paths
             }
         }
 
-        public static void DebugDrawSpline(ISpline spline, uint numMidPoints, Color color)
+        public static void DebugDrawSpline(ISpline spline, int numMidPoints, Color color)
         {
+            if (numMidPoints < 0)
+                throw new System.ArgumentOutOfRangeException("numMidPoints");
+
             for (float i = 0; i < numMidPoints; i++)
             {
                 Debug.DrawLine(
@@ -222,8 +229,11 @@ namespace Paths
             }
         }
 
-        public static void DebugDrawSpline(ISpline spline, uint numMidPoints, Color color, float duration)
+        public static void DebugDrawSpline(ISpline spline, int numMidPoints, Color color, float duration)
         {
+            if (numMidPoints < 0)
+                throw new System.ArgumentOutOfRangeException("numMidPoints");
+
             for (float i = 0; i < numMidPoints; i++)
             {
                 Debug.DrawLine(
@@ -235,8 +245,11 @@ namespace Paths
             }
         }
 
-        public static void DebugDrawSpline(ISpline spline, uint numMidPoints, Color color, float duration, bool depthTest)
+        public static void DebugDrawSpline(ISpline spline, int numMidPoints, Color color, float duration, bool depthTest)
         {
+            if (numMidPoints < 0)
+                throw new System.ArgumentOutOfRangeException("numMidPoints");
+
             for (float i = 0; i < numMidPoints; i++)
             {
                 Debug.DrawLine(
@@ -300,129 +313,5 @@ namespace Paths
         }
 
         #endregion Twist
-    }
-}
-
-//TODO: Finish documentation.
-//TODO: Move to seperate file.
-namespace Paths.Cache
-{
-    public class PathCache<T>
-    {
-        public readonly T[] Values;
-
-        protected PathCache(int cacheSize)
-        {
-            Values =  new T[cacheSize];
-        }
-
-        public PathCacheIndexInfo GetCacheIndex(float t)
-        {
-            return new PathCacheIndexInfo(Values.Length, t);
-        }
-    }
-
-    /// <summary>
-    /// A vertex cache of spline evaluations.
-    /// </summary>
-    public class VertexCache : PathCache<Vector3>, ISpline
-    {
-        public VertexCache(ISpline spline, int numMidPoints)
-            : base(numMidPoints + 2)
-        {
-            for (int i = 0; i <= Values.Length - 1; i++)
-                Values[i] = spline.Evaluate((float)i / (Values.Length - 1));
-        }
-
-        public Vector3 Evaluate(float t, out PathCacheIndexInfo indexInfo)
-        {
-            indexInfo = GetCacheIndex(t);
-
-            return Vector3.Lerp(
-                Values[indexInfo.LowerIndex],
-                Values[indexInfo.LowerIndex + 1],
-                indexInfo.PercentOfIndexes);
-        }
-
-        public Vector3 Evaluate(float t)
-        {
-            var indexInfo = GetCacheIndex(t);
-
-            return Vector3.Lerp(
-                Values[indexInfo.LowerIndex],
-                Values[indexInfo.LowerIndex + 1],
-                indexInfo.PercentOfIndexes);
-        }
-
-        //TODO: URGENT  Test this method. It should fail when evalInfo.percentOfIndexes is 0, because result - Values[evalInfo.LowerIndex] will = 0 vector.
-        public Vector3 Tangent(float t)
-        {
-            PathCacheIndexInfo evalInfo;
-            Vector3 result = Evaluate(t, out evalInfo);
-
-            return result - Values[evalInfo.LowerIndex];
-        }
-    }
-
-    //TODO: Extend PathCache, construct based on numMidPoints, not divisions.
-    public class LengthCache
-    {
-        public readonly float[] Lengths;
-
-        public LengthCache(ISpline spline, float divisions)
-        {
-            float t = 1.0f / divisions;
-            float increment = t;
-            Vector3 p1 = spline.Evaluate(0f);
-            Vector3 p2;
-            float sum = 0.0f;
-            var sums = new List<float>();
-
-            for (int i = 0; t < 1.0f; i++)
-            {
-                p2 = spline.Evaluate(t);
-                sum += Vector3.Distance(p1, p2);
-                sums.Add(sum);
-                t += increment;
-                p1 = p2;
-            }
-
-            Lengths = sums.ToArray();
-        }
-    }
-
-    public struct PathCacheIndexInfo
-    {
-        public readonly int LowerIndex;
-
-        /// <summary>
-        /// Interpolant between cache[LowerIndex] and cache[LowerIndex+1].
-        /// </summary>
-        public readonly float PercentOfIndexes;
-
-        public PathCacheIndexInfo(int cacheLength, float t)
-        {
-            float percentOfIndexes;
-            int lowerIndex;
-
-            //~ Make sure t is a valid number
-            t = Mathf.Clamp01(t);
-
-            if (Mathf.Approximately(t, 1f)) // avoid index out of bounds
-            {
-                lowerIndex = cacheLength - 2;
-                percentOfIndexes = 1f;
-            }
-            else
-            {
-                percentOfIndexes = t * (cacheLength - 1);
-                lowerIndex = Mathf.FloorToInt(percentOfIndexes);
-                if (lowerIndex != 0) // avoid NaN from indexInterpolant % 0
-                    percentOfIndexes = percentOfIndexes % lowerIndex; // store value that is inbetween 0 and 1.
-            }
-
-            LowerIndex = lowerIndex;
-            PercentOfIndexes = percentOfIndexes;
-        }
     }
 }
