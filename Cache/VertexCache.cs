@@ -5,32 +5,35 @@ namespace Paths.Cache
     /// <summary>
     /// Caches spline evaluations.
     /// </summary>
-    public class VertexCache : PathCache<Vector3>, ISpline
+    public class EvaluationCache : PathCache<Vector3>, ISpline
     {
-        public VertexCache(ISpline spline, int numMidPoints)
-            : base(numMidPoints + 2)
+        public EvaluationCache(Vector3[] values)
+            : base(values) { }
+
+        public EvaluationCache(ISpline spline, int cacheSize)
+            : base(cacheSize)
         {
-            for (int i = 0; i < Values.Length; i++)
-                Values[i] = spline.Evaluate((float)i / (Values.Length - 1));
+            for (int i = 0; i < this.Values.Length; i++)
+                this.Values[i] = spline.Evaluate((float)i / (Values.Length - 1));
         }
 
         public Vector3 Evaluate(float t)
         {
-            var indexInfo = GetCacheIndex(t);
+            var indexInfo = GetCacheIndexInfo(t);
 
             return Vector3.Lerp(
-                Values[indexInfo.LowerIndex],
-                Values[indexInfo.LowerIndex + 1],
+                this.Values[indexInfo.LowerIndex],
+                this.Values[indexInfo.UpperIndex],
                 indexInfo.PercentOfIndexes);
         }
 
         public Vector3 Evaluate(float t, out PathCacheIndexInfo indexInfo)
         {
-            indexInfo = GetCacheIndex(t);
+            indexInfo = GetCacheIndexInfo(t);
 
             return Vector3.Lerp(
-                Values[indexInfo.LowerIndex],
-                Values[indexInfo.LowerIndex + 1],
+                this.Values[indexInfo.LowerIndex],
+                this.Values[indexInfo.UpperIndex],
                 indexInfo.PercentOfIndexes);
         }
 
@@ -39,7 +42,7 @@ namespace Paths.Cache
             PathCacheIndexInfo evalInfo;
             Evaluate(t, out evalInfo);
 
-            return Values[evalInfo.LowerIndex + 1] - Values[evalInfo.LowerIndex];
+            return this.Values[evalInfo.UpperIndex] - this.Values[evalInfo.LowerIndex];
         }
     }
 }

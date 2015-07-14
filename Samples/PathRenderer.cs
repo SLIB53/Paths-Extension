@@ -35,7 +35,7 @@ public class PathRenderer : MonoBehaviour
 
         lineRenderer.SetVertexCount(vertexCount);
 
-        var vertices = new VertexCache(path, vertexCount - 2).Values;
+        var vertices = new EvaluationCache(path, vertexCount - 2).Values;
         for (int i = 0; i < vertices.Length; i++)
             lineRenderer.SetPosition(i, vertices[i]);
     }

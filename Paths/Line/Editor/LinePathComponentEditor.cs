@@ -181,7 +181,7 @@ Draw:
         Vector3 startPoint = linePath.Evaluate(0f);
         Vector3 endPoint = linePath.Evaluate(1f);
 
-        // draw line 
+        // draw line
         var cPointCache = new Vector3[32];
 
         for (int i = 0; i < cPointCache.Length; i++)
@@ -196,7 +196,7 @@ Draw:
             Handles.DrawAAPolyLine(lineSegment);
         }
 
-        // draw direction cone cap 
+        // draw direction cone cap
         if (!settings.HideDirectionCones
             && linePath.LocalSpaceTransform.lossyScale != Vector3.zero
             && linePath.StartPosition != linePath.EndPosition) // also hide cones if virtually a dot
@@ -210,7 +210,7 @@ Draw:
             Handles.ConeCap(0, endPoint, Quaternion.LookRotation(linePath.Tangent()), endConeSize);
         }
 
-        // test t 
+        // test t
         Handles.color = PathEditorUtility.GetTColor(settings.EditorData.T);
         if (settings.TestInterpolate)
         {
@@ -219,7 +219,7 @@ Draw:
             Handles.SphereCap(0, targetPoint, Quaternion.identity, sphereSize);
         }
 
-        // draw GUI 
+        // draw GUI
         InterpolateSceneGUI();
         ToolShelf();
     }

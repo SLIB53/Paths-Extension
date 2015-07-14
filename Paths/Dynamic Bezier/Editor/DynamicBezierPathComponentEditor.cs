@@ -243,7 +243,7 @@ Draw:
         var worldBezier = targetPath.WorldSpaceBezier;
         var vertexCount = DynamicBezier.GoodNumMidPoints * worldBezier.Knots.Count;
         vertexCount /= 2;
-        var cPointCache = new VertexCache(worldBezier, vertexCount).Values;//PathUtility.BuildCache(worldBezier, vertexCount);
+        var cPointCache = new EvaluationCache(worldBezier, vertexCount).Values;
 
         // draw bezier
         PathEditorUtility.DrawSplineInScene(cPointCache);

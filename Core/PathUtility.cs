@@ -199,12 +199,12 @@ namespace Paths
 
         #region Twist
 
-        public static Quaternion Twist(ISpline core, float coreT, ISpline guide, float guideT)
+        public static Quaternion Twist(ISpline core, float t_core, ISpline guide, float t_guide)
         {
-            Vector3 corePoint = core.Evaluate(coreT);
-            Vector3 rotationPoint = guide.Evaluate(guideT);
+            Vector3 corePoint = core.Evaluate(t_core);
+            Vector3 rotationPoint = guide.Evaluate(t_guide);
 
-            Vector3 tangentBasis = core.Tangent(coreT);
+            Vector3 tangentBasis = core.Tangent(t_core);
             tangentBasis = tangentBasis.normalized;
 
             Vector3 normalBasis = Vector3.Cross(tangentBasis, rotationPoint - corePoint);
@@ -227,5 +227,6 @@ namespace Paths
         }
 
         #endregion Twist
+
     }
 }

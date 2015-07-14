@@ -151,9 +151,6 @@ Draw:
             safe = false;
         }
 
-        //if(!safe)
-        //    SceneView.currentDrawingSceneView.ShowNotification(new GUIContent(PathEditorUtility.EditorUnavailable));
-
         return safe;
     }
 
@@ -212,7 +209,7 @@ Draw:
     private void Draw()
     {
         QuadraticBezier worldBezier = qdrBezierPath.WorldSpaceBezier;
-        var cPointCache = new VertexCache(worldBezier, QuadraticBezier.GoodNumMidPoints).Values; //PathUtility.BuildCache(worldBezier, DynamicBezier.GoodNumMidPoints);
+        var cPointCache = new EvaluationCache(worldBezier, QuadraticBezier.GoodNumMidPoints).Values;
 
         // draw bezier
         PathEditorUtility.DrawSplineInScene(cPointCache);

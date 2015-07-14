@@ -2,9 +2,15 @@
 
 namespace Paths.Cache
 {
+    /// <summary>
+    /// Base class for path caches, and parallel caches.
+    /// </summary>
+    /// <typeparam name="T">Type of cached values.</typeparam>
     public abstract class PathCache<T>
     {
         public readonly T[] Values;
+
+        protected PathCache(T[] values) { Values = values; }
 
         protected PathCache(int cacheSize)
         {
@@ -18,7 +24,10 @@ namespace Paths.Cache
             Values = new T[cacheSize];
         }
 
-        public PathCacheIndexInfo GetCacheIndex(float t)
+        /// <summary>
+        /// Converts the common t spline parameter to PathCache.Values indexes.
+        /// </summary>
+        public PathCacheIndexInfo GetCacheIndexInfo(float t)
         {
             return new PathCacheIndexInfo(Values.Length, t);
         }
@@ -29,6 +38,9 @@ namespace Paths.Cache
     /// </summary>
     public struct PathCacheIndexInfo
     {
+        /// <summary>
+        /// Lower bound index for interpolant.
+        /// </summary>
         public readonly int LowerIndex;
 
         /// <summary>
@@ -36,7 +48,7 @@ namespace Paths.Cache
         /// </summary>
         public readonly float PercentOfIndexes;
 
-        public PathCacheIndexInfo(int cacheLength, float t)
+        public PathCacheIndexInfo(int cacheSize, float t)
         {
             float percentOfIndexes;
             int lowerIndex;
@@ -46,12 +58,12 @@ namespace Paths.Cache
 
             if (Mathf.Approximately(t, 1f)) // avoid index out of bounds
             {
-                lowerIndex = cacheLength - 2;
+                lowerIndex = cacheSize - 2;
                 percentOfIndexes = 1f;
             }
             else
             {
-                percentOfIndexes = t * (cacheLength - 1);
+                percentOfIndexes = t * (cacheSize - 1);
                 lowerIndex = Mathf.FloorToInt(percentOfIndexes);
                 if (lowerIndex != 0) // avoid NaN from indexInterpolant % 0
                     percentOfIndexes = percentOfIndexes % lowerIndex; // store value that is inbetween 0 and 1.
@@ -61,6 +73,9 @@ namespace Paths.Cache
             PercentOfIndexes = percentOfIndexes;
         }
 
+        /// <summary>
+        /// Upper bound index for interpolant.
+        /// </summary>
         public int UpperIndex { get { return LowerIndex + 1; } }
     }
 }

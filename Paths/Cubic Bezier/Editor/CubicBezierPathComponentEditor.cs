@@ -226,7 +226,7 @@ Draw:
         CubicBezier worldBezier = cubicBezierPath.WorldSpaceBezier;
 
         // draw bezier
-        Vector3[] cPointCache = new VertexCache(worldBezier, CubicBezier.GoodNumMidPoints).Values; // PathUtility.BuildCache(worldBezier, CubicBezier.GoodNumMidPoints);
+        Vector3[] cPointCache = new EvaluationCache(worldBezier, CubicBezier.GoodNumMidPoints).Values;
         /*Handles.color = Color.yellow;
         Handles.DrawAAPolyLine(cPointCache);
         */

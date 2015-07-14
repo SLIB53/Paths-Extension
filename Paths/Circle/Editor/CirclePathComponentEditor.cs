@@ -174,7 +174,7 @@ Draw:
             reducedCirclePath.MaxAngle -= Circle.TwoPI;
 
         // draw circle
-        var cPointCache = new VertexCache(reducedCirclePath, 128).Values; //PathUtility.BuildCache(reducedCirclePath, 128);
+        var cPointCache = new EvaluationCache(reducedCirclePath, 128).Values;
         /*Handles.color = Color.yellow;
         Handles.DrawAAPolyLine(cPointCache);
         */
