@@ -2,7 +2,7 @@ VERSION 0.75
 
 
 CHANGES
-`PathCache implementation (VertexCache, LengthCache)
+`PathCache implementation (EvaluationCache, LengthCache, PathCacheUtility)
 `Editor fixes
 `Tangent drawing in Test Interpolate
 
@@ -16,7 +16,6 @@ Known Issues
 `Cannot undo create from menu
 
 Tasks
-`Hide vs Draw inconsistency in settings
 `DynamicBezier == overload
 `Finish Dynamic bezier editor
 `Lock visibility
